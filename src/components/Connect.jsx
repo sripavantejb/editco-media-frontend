@@ -6,6 +6,8 @@ import Navbar from './Navbar'
 // Main Connect component
 function Connect() {
   // State to store all form data - this holds all the information the user enters
+
+
   const [formData, setFormData] = useState({
     firstName: '',        // User's first name
     lastName: '',         // User's last name
@@ -28,7 +30,7 @@ function Connect() {
 
   // List of all services we offer - this comes from your Cards component
   const availableServices = [
-    'Reel Editing',              // Instagram/TikTok video editing
+    'Real Editing',              // Real photo/video editing
     'Shirt Editing',             // Clothing product editing
     'Thumbnail Editing',         // YouTube/Instagram thumbnails
     'T-Shirt Mockups',          // Product mockups
@@ -147,6 +149,40 @@ function Connect() {
     return !hasErrors
   }
 
+
+  // Function to send form data to backend API
+  const postDetails = async (formData) => {
+    // Map frontend field names to backend field names
+    const mappedData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      emailAddress: formData.email,  // Frontend uses 'email', backend expects 'emailAddress'
+      phoneNumber: formData.phone,    // Frontend uses 'phone', backend expects 'phoneNumber'
+      companyName: formData.company,   // Frontend uses 'company', backend expects 'companyName'
+      projectType: formData.projectType,
+      budgetRange: formData.budget,   // Frontend uses 'budget', backend expects 'budgetRange'
+      timeline: formData.timeline,
+      servicesNeeded: formData.services, // Frontend uses 'services', backend expects 'servicesNeeded'
+      projectDescription: formData.message, // Frontend uses 'message', backend expects 'projectDescription'
+      agreedToTerms: formData.agreeToTerms
+    }
+
+    const response = await fetch('http://localhost:3000/api/connect/post', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mappedData)
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to submit form')
+    }
+
+    return await response.json()
+  }
+
   // Function to handle form submission - called when user clicks "Send Message"
   const handleSubmit = async (e) => {
     // Prevent the page from refreshing when form is submitted
@@ -162,22 +198,35 @@ function Connect() {
     setIsLoading(true)
     
     try {
-      // Simulate sending data to server (replace with real API call later)
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Send data to backend API
+      const result = await postDetails(formData)
       
-      // Log the form data to console (replace with actual connect logic)
-      console.log('Connect form data:', formData)
+      // Log the successful submission
+      console.log('Form submitted successfully:', result)
       
-      // Here you would typically send data to your backend server
-      // Example: await connectAPI(formData)
-      
-      // Show success message to user (you can replace this with a modal or redirect)
+      // Show success message to user
       alert('Thank you! We\'ll get back to you within 24 hours.')
+      
+      // Reset form after successful submission
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        company: '',
+        projectType: '',
+        budget: '',
+        timeline: '',
+        services: [],
+        message: '',
+        agreeToTerms: false
+      })
+      setErrors({})
       
     } catch (error) {
       // Handle any errors that might occur
       console.error('Connect form error:', error)
-      alert('Something went wrong. Please try again.')
+      alert(`Something went wrong: ${error.message}`)
     } finally {
       // Hide loading spinner whether success or error
       setIsLoading(false)
@@ -361,9 +410,9 @@ function Connect() {
                 {/* Grid layout - 1 column on mobile, 2 columns on medium screens and up */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Using helper functions to create input fields */}
-                  {createInputField('firstName', 'First Name', 'text', 'John')}
-                  {createInputField('lastName', 'Last Name', 'text', 'Doe')}
-                  {createInputField('email', 'Email Address', 'email', 'john.doe@example.com')}
+                  {createInputField('firstName', 'First Name', 'text', 'enter your first name')}
+                  {createInputField('lastName', 'Last Name', 'text', 'enter your last name')}
+                  {createInputField('email', 'Email Address', 'email', 'example@example.com')}
                   {createInputField('phone', 'Phone Number', 'tel', '+1 (555) 123-4567')}
                   {createInputField('company', 'Company Name', 'text', 'Your Company', false)}
                 </div>
@@ -385,21 +434,19 @@ function Connect() {
                   ])}
                   
                   {createSelectField('budget', 'Budget Range', [
-                    'Under $1,000',         // Small budget
-                    '$1,000 - $5,000',      // Medium budget
-                    '$5,000 - $10,000',     // Large budget
-                    '$10,000 - $25,000',    // Very large budget
-                    '$25,000+',             // Enterprise budget
-                    'Let\'s discuss'        // Not sure yet
+                    '$1k-$5k',              // Small budget
+                    '$5k-$10k',             // Medium budget
+                    '$10k-$25k',            // Large budget
+                    '$25k-$50k',            // Very large budget
+                    '$50k+'                 // Enterprise budget
                   ])}
                   
                   {createSelectField('timeline', 'Timeline', [
-                    'ASAP',                 // Urgent
-                    'Within 1 month',       // Quick turnaround
-                    '1-3 months',           // Standard timeline
+                    '1-2 weeks',            // Quick turnaround
+                    '1 month',               // Standard timeline
+                    '2-3 months',           // Medium project
                     '3-6 months',           // Longer project
-                    '6+ months',            // Very long project
-                    'Flexible'              // No rush
+                    '6+ months'             // Very long project
                   ])}
                 </div>
               </div>
@@ -448,6 +495,7 @@ function Connect() {
                   privacy: 'Privacy Policy'    // Link to privacy policy
                 })}
               </div>
+
 
               {/* Submit button with loading state */}
               <button

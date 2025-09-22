@@ -24,15 +24,15 @@ const Navbar = () => {
           <a href="/blogs" className="text-white hover:text-[#ffd600] transition-colors duration-200 text-lg font-normal">Blog</a>
         </div>
         <div className="flex items-center gap-4">
-          {/* Sign In Button */}
-          <a href="/signin">
+          {/* Admin Login Button */}
+          <a href="/admin-login">
             <button
               className="relative flex items-center justify-center w-24 h-10 rounded-full text-[14px] font-inherit border border-white/20 overflow-hidden z-[1] group bg-transparent text-white hover:text-black transition-colors duration-200"
             >
               <span
                 className="absolute top-0 left-0 h-full w-0 rounded-full bg-gradient-to-r from-[#fff9be] to-[#ffd600] transition-all duration-500 ease-in-out z-[-1] group-hover:w-full"
               ></span>
-              Sign In
+              Admin
             </button>
           </a>
           
@@ -68,7 +68,7 @@ const Navbar = () => {
               <a href="/about" className="block px-4 py-2 text-white hover:text-[#ffd600]">About</a>
               <a href="/blogs" className="block px-4 py-2 text-white hover:text-[#ffd600]">Blog</a>
               <div className="border-t border-white/10 my-2"></div>
-              <a href="/signin" className="block px-4 py-2 text-white hover:text-[#ffd600]">Sign In</a>
+              <a href="/admin-login" className="block px-4 py-2 text-white hover:text-[#ffd600]">Admin</a>
               <a href="/connect" className="block px-4 py-2 text-white hover:text-[#ffd600]">Connect</a>
             </div>
           </div>

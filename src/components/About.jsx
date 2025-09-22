@@ -230,43 +230,6 @@ function About() {
           </div>
         </section>
 
-        {/* Call to Action Section */}
-        <section className="px-4 py-16 md:py-24">
-          <div className="max-w-4xl mx-auto text-center">
-            {/* CTA content */}
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Ready to Start Your <span className="text-[#ffd600]">Project</span>?
-            </h2>
-            <p className="text-xl text-white/70 mb-8 leading-relaxed">
-              Let's work together to create something amazing. We're here to help bring your vision to life.
-            </p>
-            
-            {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {/* Connect button */}
-              <a href="/connect">
-                <button className="relative inline-flex items-center justify-center px-8 py-4 text-white border border-white/30 rounded-xl overflow-hidden group">
-                  {/* Button background gradient */}
-                  <span className="absolute inset-x-0 bottom-0 h-0 bg-gradient-to-t from-[#ffd600] to-[#fff9be] transition-all duration-500 ease-in-out group-hover:h-full"></span>
-                  
-                  {/* Button content */}
-                  <span className="relative z-10 text-lg font-medium">Get Started</span>
-                </button>
-              </a>
-              
-              {/* Sign in button */}
-              <a href="/signin">
-                <button className="relative inline-flex items-center justify-center px-8 py-4 text-white border border-white/20 rounded-xl overflow-hidden group bg-transparent">
-                  {/* Button background gradient */}
-                  <span className="absolute inset-x-0 bottom-0 h-0 bg-gradient-to-t from-[#ffd600] to-[#fff9be] transition-all duration-500 ease-in-out group-hover:h-full"></span>
-                  
-                  {/* Button content */}
-                  <span className="relative z-10 text-lg font-medium">Sign In</span>
-                </button>
-              </a>
-            </div>
-          </div>
-        </section>
       </div>
     </div>
   )

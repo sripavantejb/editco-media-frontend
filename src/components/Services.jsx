@@ -1,5 +1,5 @@
 import React from 'react';
-import Cards from './Cards';
+import ServiceCarousel from './ServiceCarousel';
 
 function Services() {
   return (
@@ -9,8 +9,8 @@ function Services() {
           SERVICES
         </h1>
       </div>
-        <div>
-           <Cards/> 
+        <div className='mt-10'>
+        <ServiceCarousel />
         </div>
     </div>
   );
