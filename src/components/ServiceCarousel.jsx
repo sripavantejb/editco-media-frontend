@@ -76,28 +76,30 @@ const ServiceCarousel = () => {
     }, 3000); // Change card every 3 seconds
   };
 
-  // Effect to handle scrolling the active card into view
+  // Effect to handle scrolling the active card horizontally inside the container only
   React.useEffect(() => {
     const activeCard = cardRefs.current[activeIndex];
-    if (activeCard) {
-      activeCard.scrollIntoView({
-        behavior: 'smooth',
-        inline: 'center',
-        block: 'nearest'
-      });
-    }
+    const container = containerRef.current;
+    if (!activeCard || !container) return;
+
+    // Compute the horizontal position to center the active card without affecting page scroll
+    const activeCardCenter = activeCard.offsetLeft + activeCard.offsetWidth / 2;
+    const targetScrollLeft = activeCardCenter - container.offsetWidth / 2;
+
+    container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
   }, [activeIndex]);
 
   // Effect to initialize and clean up the autoplay timer
   React.useEffect(() => {
-    startAutoplay();
-    // Cleanup function to clear the interval when the component unmounts
+    // Disable autoplay on initial load to prevent page from auto-scrolling into view
+    // Users can still interact with the carousel manually
+    // startAutoplay();
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []); // runs once on mount
 
   // Handler for when a user clicks a card
   const handleCardClick = (index) => {
