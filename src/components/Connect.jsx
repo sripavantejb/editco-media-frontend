@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 // Import Navbar component
 import Navbar from './Navbar'
+import { apiFetch } from '../config/api'
 
 // Main Connect component
 function Connect() {
@@ -167,11 +168,8 @@ function Connect() {
       agreedToTerms: formData.agreeToTerms
     }
 
-    const response = await fetch('http://localhost:3000/api/connect/post', {
+    const response = await apiFetch('/api/connect/post', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(mappedData)
     })
 

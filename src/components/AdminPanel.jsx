@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiFetch } from '../config/api';
 import { useNavigate } from 'react-router-dom';
 
 function AdminPanel() {
@@ -26,7 +27,7 @@ function AdminPanel() {
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/api/admin/submissions');
+      const response = await apiFetch('/api/admin/submissions');
       const data = await response.json();
       
       if (data.success) {
@@ -44,11 +45,8 @@ function AdminPanel() {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/admin/submissions/${id}/status`, {
+      const response = await apiFetch(`/api/admin/submissions/${id}/status`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ status: newStatus })
       });
 
@@ -73,7 +71,7 @@ function AdminPanel() {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/api/admin/submissions/${id}`, {
+      const response = await apiFetch(`/api/admin/submissions/${id}`, {
         method: 'DELETE'
       });
 

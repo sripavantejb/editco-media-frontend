@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import { apiFetch } from '../config/api';
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -52,11 +53,8 @@ function AdminLogin() {
     setIsLoading(true);
     
     try {
-      const response = await fetch('http://localhost:3000/api/admin/login', {
+      const response = await apiFetch('/api/admin/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(formData)
       });
 
