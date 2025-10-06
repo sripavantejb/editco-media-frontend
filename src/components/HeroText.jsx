@@ -1,6 +1,16 @@
 import React from 'react'
 
 function HeroText() {
+  const scrollToServices = () => {
+    const servicesSection = document.getElementById('services');
+    if (servicesSection) {
+      servicesSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <div className="bg-[#1d1d1f] p-9 inset-x-0 bottom-6 z-20 px-6 md:px-12 lg:px-16">
       <div className="max-w-6xl">
@@ -12,7 +22,10 @@ function HeroText() {
         </p>
       </div>
       <div className="mt-4 md:mt-0 md:absolute md:right-12 lg:right-16 md:-bottom-2">
-        <button className="relative px-6 md:px-7 py-2.5 md:py-3 text-[16px] md:text-[18px] text-white border border-white/30 rounded-xl overflow-hidden pointer-events-auto group hover:text-black">
+        <button 
+          onClick={scrollToServices}
+          className="relative px-6 md:px-7 py-2.5 md:py-3 text-[16px] md:text-[18px] text-white border border-white/30 rounded-xl overflow-hidden pointer-events-auto group hover:text-black"
+        >
           <span className="absolute inset-x-0 bottom-0 h-0 bg-gradient-to-t from-[#ffd600] to-[#fff9be] transition-all duration-500 ease-in-out group-hover:h-full"></span>
           <span className="relative z-10">What we do</span>
         </button>

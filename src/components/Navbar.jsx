@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 
-
-
 const Navbar = () => {
   const [open, setOpen] = useState(false)
 
@@ -21,7 +19,7 @@ const Navbar = () => {
           <a href="/services" className="text-white hover:text-[#ffc800f3] transition-colors duration-200 text-lg font-normal">Services</a>
           <a href="/work" className="text-white hover:text-[#ffd600] transition-colors duration-200 text-lg font-normal">Work</a>
           <a href="/about" className="text-white hover:text-[#ffd600] transition-colors duration-200 text-lg font-normal">About</a>
-          <a href="/blogs" className="text-white hover:text-[#ffd600] transition-colors duration-200 text-lg font-normal">Blog</a>
+          {/* <a href="/blogs" className="text-white hover:text-[#ffd600] transition-colors duration-200 text-lg font-normal">Blog</a> */}
         </div>
         <div className="flex items-center gap-4">
           {/* Admin Login Button */}
@@ -66,7 +64,7 @@ const Navbar = () => {
               <a href="/services" className="block px-4 py-2 text-white hover:text-[#ffd600]">Services</a>
               <a href="/work" className="block px-4 py-2 text-white hover:text-[#ffd600]">Work</a>
               <a href="/about" className="block px-4 py-2 text-white hover:text-[#ffd600]">About</a>
-              <a href="/blogs" className="block px-4 py-2 text-white hover:text-[#ffd600]">Blog</a>
+              {/* <a href="/blogs" className="block px-4 py-2 text-white hover:text-[#ffd600]">Blog</a> */}
               <div className="border-t border-white/10 my-2"></div>
               <a href="/admin-login" className="block px-4 py-2 text-white hover:text-[#ffd600]">Admin</a>
               <a href="/connect" className="block px-4 py-2 text-white hover:text-[#ffd600]">Connect</a>
@@ -78,5 +76,7 @@ const Navbar = () => {
     </nav>
   )
 }
+
+
 
 export default Navbar;

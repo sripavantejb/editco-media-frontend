@@ -8,22 +8,22 @@ function About() {
   // Team members data - this could come from a database later
   const teamMembers = [
     {
-      name: 'John Smith',
+      name: 'Sri Pavan Tej B',
       role: 'Creative Director',
       description: 'Leading our creative vision with 8+ years in digital design and branding.',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face'
+      image: 'https://res.cloudinary.com/dqataciy5/image/upload/v1759494875/IMG_7173_fuk9wf.jpg'
     },
     {
-      name: 'Sarah Johnson',
+      name: 'Deepika M',
       role: 'UX Designer',
       description: 'Crafting user experiences that delight and convert with data-driven design.',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=300&fit=crop&crop=face'
+      image: 'https://res.cloudinary.com/dqataciy5/image/upload/v1759729626/deepika_JPG_ylslw4.jpg'
     },
     {
-      name: 'Mike Chen',
+      name: 'Harsha P',
       role: 'Developer',
       description: 'Building scalable solutions with modern technologies and clean code.',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face'
+      image: 'https://res.cloudinary.com/dqataciy5/image/upload/v1759729526/harsha_png_j8dd1t.jpg'
     }
   ]
 
@@ -32,39 +32,35 @@ function About() {
     {
       title: 'Innovation',
       description: 'We embrace cutting-edge technologies and creative solutions to stay ahead of the curve.',
-      icon: '🚀'
     },
     {
       title: 'Quality',
       description: 'Every project receives meticulous attention to detail and uncompromising quality standards.',
-      icon: '✨'
     },
     {
       title: 'Collaboration',
       description: 'We work closely with our clients as partners, ensuring their vision becomes reality.',
-      icon: '🤝'
     },
     {
       title: 'Growth',
       description: 'We\'re committed to continuous learning and helping our clients achieve sustainable growth.',
-      icon: '📈'
     }
   ]
 
   // Company statistics - impressive numbers
   const stats = [
-    { number: '50+', label: 'Projects Completed' },
-    { number: '25+', label: 'Happy Clients' },
-    { number: '3+', label: 'Years Experience' },
+    { number: '10+', label: 'Projects Completed' },
+    { number: '8+', label: 'Happy Clients' },
+    { number: '2+', label: 'Years Experience' },
     { number: '100%', label: 'Client Satisfaction' }
   ]
 
   // Helper function to create a team member card
   const createTeamCard = (member) => {
     return (
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-all duration-300">
+      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-all duration-300 h-full flex flex-col">
         {/* Team member image */}
-        <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-2 border-[#ffd600]/30">
+        <div className="w-64 h-64 rounded-xl mx-auto mb-4 overflow-hidden border-2 border-[#ffd600]/30">
           <img
             src={member.image}
             alt={member.name}
@@ -79,7 +75,7 @@ function About() {
         <p className="text-[#ffd600] font-medium mb-3">{member.role}</p>
         
         {/* Team member description */}
-        <p className="text-white/70 text-sm leading-relaxed">{member.description}</p>
+        <p className="text-white/70 text-sm leading-relaxed flex-grow">{member.description}</p>
       </div>
     )
   }
@@ -87,15 +83,12 @@ function About() {
   // Helper function to create a value card
   const createValueCard = (value) => {
     return (
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
-        {/* Value icon */}
-        <div className="text-4xl mb-4">{value.icon}</div>
-        
+      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 h-full flex flex-col">
         {/* Value title */}
         <h3 className="text-xl font-semibold text-white mb-3">{value.title}</h3>
         
         {/* Value description */}
-        <p className="text-white/70 leading-relaxed">{value.description}</p>
+        <p className="text-white/70 leading-relaxed flex-grow">{value.description}</p>
       </div>
     )
   }
@@ -152,7 +145,7 @@ function About() {
         </section>
 
         {/* Our Story Section */}
-        <section className="px-4 py-16 md:py-24">
+        <section id="about" className="px-4 py-16 md:py-24">
           <div className="max-w-6xl mx-auto">
             {/* Section title */}
             <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
@@ -182,8 +175,15 @@ function About() {
               
               {/* Story image placeholder */}
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
-                <div className="text-6xl mb-4">🎨</div>
-                <h4 className="text-xl font-semibold text-white mb-2">Creative Excellence</h4>
+                {/* Editco.Media Logo */}
+                <div className="mb-6 flex justify-center">
+                  <img 
+                    src="https://res.cloudinary.com/dqataciy5/image/upload/v1759494272/29292A_shade_editco_logo_tojjqu.png"
+                    alt="Editco.Media Logo"
+                    className="h-60 w-auto mx-auto"
+                  />
+                </div>
+                <h4 className="text-xl font-semibold text-white mb-2">Editco.Media</h4>
                 <p className="text-white/70">Where imagination meets innovation</p>
               </div>
             </div>

@@ -5,9 +5,10 @@ import HeroText from './HeroText'
 import Services from './services'
 import About from './about'
 import Work from './work'
-import Blogs from './blogs'
+// import Blogs from './blogs'
 // import ServiceCard from './ServiceCard'
 import ServiceCarousel from './ServiceCarousel'
+import Footer from './Footer'
 
 
 function Home() {
@@ -19,7 +20,7 @@ function Home() {
       <Services />
       <Work />
       <About />
-      <Blogs />
+      <Footer />
     </div>
   )
 }
