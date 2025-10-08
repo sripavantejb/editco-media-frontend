@@ -58,23 +58,7 @@ const ServiceCarousel = () => {
   // Refs to hold the container and card elements for scrolling
   const containerRef = React.useRef(null);
   const cardRefs = React.useRef([]);
-  // Ref to hold the interval ID for cleanup
-  const intervalRef = React.useRef(null);
 
-  // Function to start or reset the autoplay timer
-  const startAutoplay = () => {
-    // Clear any existing timer
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    // Set a new timer
-    intervalRef.current = setInterval(() => {
-      setActiveIndex((prevIndex) => {
-        // Loop back to the start when the end is reached
-        return (prevIndex + 1) % servicesData.length;
-      });
-    }, 3000); // Change card every 3 seconds
-  };
 
   // Effect to handle scrolling the active card horizontally inside the container only
   React.useEffect(() => {
@@ -136,23 +120,10 @@ const ServiceCarousel = () => {
     };
   }, [activeIndex]);
 
-  // Effect to initialize and clean up the autoplay timer
-  React.useEffect(() => {
-    // Disable autoplay on initial load to prevent page from auto-scrolling into view
-    // Users can still interact with the carousel manually
-    // startAutoplay();
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []); // runs once on mount
 
   // Handler for when a user clicks a card
   const handleCardClick = (index) => {
     setActiveIndex(index);
-    // Reset the autoplay timer so the user has time to view the card
-    startAutoplay();
   };
 
   return (
