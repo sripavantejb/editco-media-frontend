@@ -89,6 +89,53 @@ const ServiceCarousel = () => {
     container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
   }, [activeIndex]);
 
+  // Function to find the card closest to the center
+  const findClosestCardToCenter = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const containerCenter = container.offsetWidth / 2;
+    const containerScrollLeft = container.scrollLeft;
+    const viewportCenter = containerCenter + containerScrollLeft;
+
+    let closestIndex = 0;
+    let minDistance = Infinity;
+
+    cardRefs.current.forEach((card, index) => {
+      if (card) {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const distance = Math.abs(cardCenter - viewportCenter);
+        
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestIndex = index;
+        }
+      }
+    });
+
+    return closestIndex;
+  };
+
+  // Effect to handle scroll events and update active card
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const closestIndex = findClosestCardToCenter();
+      if (closestIndex !== activeIndex) {
+        setActiveIndex(closestIndex);
+      }
+    };
+
+    // Add scroll event listener
+    container.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [activeIndex]);
+
   // Effect to initialize and clean up the autoplay timer
   React.useEffect(() => {
     // Disable autoplay on initial load to prevent page from auto-scrolling into view
@@ -112,7 +159,11 @@ const ServiceCarousel = () => {
     <div
       ref={containerRef}
       // Added [perspective:1000px] and scrollbar-hiding classes
-      className="flex items-center w-full max-w-7xl overflow-x-auto p-10 [perspective:1000px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="flex items-center w-full max-w-7xl overflow-x-auto px-10 py-8 [perspective:1000px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      style={{ 
+        alignItems: 'center',
+        justifyContent: 'flex-start'
+      }}
     >
       {servicesData.map((service, index) => (
         <div
@@ -125,6 +176,7 @@ const ServiceCarousel = () => {
             flex-shrink-0 w-64 h-96 mx-4 bg-[#313131] rounded-2xl shadow-md cursor-pointer 
             flex flex-col justify-center items-center text-center p-5 relative
             transition-all duration-[100ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]
+            ${index === servicesData.length - 1 ? 'mr-0' : ''}
             ${
               // Conditional classes for the active vs. inactive cards
               activeIndex === index
@@ -132,6 +184,13 @@ const ServiceCarousel = () => {
                 : 'scale-85 opacity-60 z-0' // Inactive state
             }
           `}
+          style={{
+            // Ensure consistent vertical alignment regardless of scale
+            alignSelf: 'center',
+            transformOrigin: 'center center',
+            marginTop: 0,
+            marginBottom: 0
+          }}
         >
           <h3 className="text-xl font-semibold mb-2 text-[#ffd600]">{service.title}</h3>
           <p className="text-white">{service.description}</p>

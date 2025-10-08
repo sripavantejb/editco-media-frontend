@@ -14,7 +14,7 @@ function Services() {
         </h1>
       </div>
         <div className='mt-10'>
-        <ServiceCarousel />
+          <ServiceCarousel />
         </div>
     </div>
   );
