@@ -30,17 +30,9 @@ const servicesData = [
     title: 'Social Media Management', 
     description: 'Content scheduling, caption writing, hashtag strategy, and performance analytics.' 
   },
-  { 
-    title: 'Digital Marketing', 
-    description: 'Campaign design, Meta/Google ads, branding support, and growth strategy.' 
-  },
   {
     title: 'Logo & Brand Identity',
     description: 'Creating memorable logos and complete brand style guides for a cohesive visual identity.'
-  },
-  {
-    title: 'SEO & Content Strategy',
-    description: 'Optimizing your website and content to rank higher on search engines like Google.'
   },
   {
     title: 'Podcast & Audio Editing',
@@ -49,12 +41,27 @@ const servicesData = [
   {
     title: 'E-commerce Product Editing',
     description: 'Advanced photo retouching for all types of e-commerce products to boost sales.'
+  },
+  {
+    title: 'SEO & Content Strategy',
+    description: 'Optimizing your website and content to rank higher on search engines like Google.'
+  },
+  {
+    title: 'AI Automations',
+    description: 'Intelligent workflow automation solutions using AI to streamline your business processes and increase efficiency.'
+  },
+  {
+    title: 'Digital Marketing',
+    description: 'Campaign design, Meta/Google ads, branding support, and growth strategy.'
   }
 ];
 const ServiceCarousel = () => {
-  // State to track the currently active card index. Start in the middle.
-  const [activeIndex, setActiveIndex] = React.useState(Math.floor(servicesData.length / 2));
+  // State to track the currently active card index. Start with AI Automations card.
+  const [activeIndex, setActiveIndex] = React.useState(11); // AI Automations is at index 11
   const [isTransitioning, setIsTransitioning] = React.useState(false);
+  const [showLeftArrow, setShowLeftArrow] = React.useState(false);
+  const [showRightArrow, setShowRightArrow] = React.useState(true);
+  const [showScrollHint, setShowScrollHint] = React.useState(true);
 
   // Refs to hold the container and card elements for scrolling
   const containerRef = React.useRef(null);
@@ -77,16 +84,34 @@ const ServiceCarousel = () => {
   }, [activeIndex, isTransitioning]);
 
 
+  // Hide scroll hint after user scrolls
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowScrollHint(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Effect to handle scroll events and update active card with infinite scroll
   React.useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const handleScroll = () => {
+      // Hide scroll hint when user starts scrolling
+      if (showScrollHint) {
+        setShowScrollHint(false);
+      }
+
+      // Update arrow visibility
+      const scrollLeft = container.scrollLeft;
+      const maxScroll = container.scrollWidth - container.offsetWidth;
+      setShowLeftArrow(scrollLeft > 50);
+      setShowRightArrow(scrollLeft < maxScroll - 50);
+
       if (isTransitioning) return;
 
       const containerWidth = container.offsetWidth;
-      const scrollLeft = container.scrollLeft;
       const scrollWidth = container.scrollWidth;
 
       // Check if we're in the duplicate cards at the end (last 3 cards)
@@ -154,12 +179,31 @@ const ServiceCarousel = () => {
     return () => {
       container.removeEventListener('scroll', handleScroll);
     };
-  }, [activeIndex, isTransitioning]);
+  }, [activeIndex, isTransitioning, showScrollHint]);
 
 
   // Handler for when a user clicks a card
-  const handleCardClick = (index) => {
-    setActiveIndex(index);
+  const handleCardClick = (originalIndex, extendedIndex) => {
+    const container = containerRef.current;
+    const clickedCard = cardRefs.current[extendedIndex];
+    if (!container || !clickedCard) {
+      setActiveIndex(originalIndex);
+      return;
+    }
+
+    // Temporarily disable scroll-sync effects to avoid interference
+    setIsTransitioning(true);
+
+    const clickedCenter = clickedCard.offsetLeft + clickedCard.offsetWidth / 2;
+    const targetScrollLeft = clickedCenter - container.offsetWidth / 2;
+
+    container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
+
+    // Update active after initiating the scroll
+    setActiveIndex(originalIndex);
+
+    // Re-enable scroll syncing shortly after the programmatic scroll starts
+    window.setTimeout(() => setIsTransitioning(false), 250);
   };
 
   // Create extended data array with duplicates for infinite scroll
@@ -169,16 +213,81 @@ const ServiceCarousel = () => {
     ...servicesData.slice(0, 3) // First 3 items at the end
   ];
 
+  // Handle arrow button clicks
+  const scrollLeft = () => {
+    const container = containerRef.current;
+    if (container) {
+      container.scrollBy({ left: -320, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    const container = containerRef.current;
+    if (container) {
+      container.scrollBy({ left: 320, behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div
-      ref={containerRef}
-      // Added [perspective:1000px] and scrollbar-hiding classes
-      className="flex items-center w-full overflow-x-auto pl-10 pr-0 py-8 [perspective:1000px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      style={{ 
-        alignItems: 'center',
-        justifyContent: 'flex-start'
-      }}
-    >
+    <div className="relative w-full">
+      {/* Scroll Hint - Mobile Only */}
+      {showScrollHint && (
+        <div className="absolute top-0 right-4 md:hidden z-20 animate-bounce">
+          <div className="bg-[#ffd600] text-black px-4 py-2 rounded-full text-xs font-semibold shadow-lg flex items-center gap-2">
+            <span>Swipe to explore</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      )}
+
+      {/* Left Arrow Button */}
+      {showLeftArrow && (
+        <button
+          onClick={scrollLeft}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-[#ffd600] hover:bg-[#fff9be] text-black rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110"
+          aria-label="Scroll left"
+        >
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+      )}
+
+      {/* Right Arrow Button */}
+      {showRightArrow && (
+        <button
+          onClick={scrollRight}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-[#ffd600] hover:bg-[#fff9be] text-black rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110"
+          aria-label="Scroll right"
+        >
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
+
+      {/* Left Edge Gradient */}
+      {showLeftArrow && (
+        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
+      )}
+
+      {/* Right Edge Gradient */}
+      {showRightArrow && (
+        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
+      )}
+
+      {/* Scroll Container */}
+      <div
+        ref={containerRef}
+        // Added [perspective:1000px] and scrollbar-hiding classes
+        className="flex items-center w-full overflow-x-auto pl-10 pr-0 py-8 [perspective:1000px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth"
+        style={{ 
+          alignItems: 'center',
+          justifyContent: 'flex-start'
+        }}
+      >
       {extendedData.map((service, index) => {
         // Calculate the original index for active state comparison
         const originalIndex = index < 3 ? 
@@ -194,7 +303,7 @@ const ServiceCarousel = () => {
             // Assign a ref to each card element
             ref={(el) => (cardRefs.current[index] = el)}
             key={`${service.title}-${index}`}
-            onClick={() => handleCardClick(originalIndex)}
+            onClick={() => handleCardClick(originalIndex, index)}
             // Base styles for all cards, including the precise transition from the original CSS
             className={`
               flex-shrink-0 w-64 h-96 mx-4 bg-[#313131] rounded-2xl shadow-md cursor-pointer 
@@ -221,6 +330,32 @@ const ServiceCarousel = () => {
           </div>
         );
       })}
+      </div>
+
+      {/* Progress Dots Indicator - Mobile Only */}
+      <div className="flex justify-center gap-2 mt-4 md:hidden">
+        {servicesData.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              setActiveIndex(index);
+              const container = containerRef.current;
+              const targetCard = cardRefs.current[index + 3]; // +3 for duplicate offset
+              if (container && targetCard) {
+                const targetCenter = targetCard.offsetLeft + targetCard.offsetWidth / 2;
+                const scrollTo = targetCenter - container.offsetWidth / 2;
+                container.scrollTo({ left: scrollTo, behavior: 'smooth' });
+              }
+            }}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              activeIndex === index 
+                ? 'w-8 bg-[#ffd600]' 
+                : 'w-2 bg-white/30 hover:bg-white/50'
+            }`}
+            aria-label={`Go to service ${index + 1}`}
+          />
+        ))}
+      </div>
     </div>
   );
 };

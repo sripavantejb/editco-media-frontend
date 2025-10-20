@@ -1,29 +1,240 @@
 // Import React
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 // Import Navbar component
 import Navbar from './Navbar'
+import BlurText from './BlurText'
+import TeamMemberPopup from './TeamMemberPopup'
 
 // Main About component
 function About() {
-  // Team members data - this could come from a database later
+  // State for popup
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  
+  // State for scroll animations
+  const [visibleValues, setVisibleValues] = useState(new Set());
+  const valueRefs = useRef([]);
+
+  // Team members data with detailed information
   const teamMembers = [
     {
       name: 'Sri Pavan Tej B',
-      role: 'Creative Director',
+      fullName: 'Sri Pavan Tej Balam',
+      pronouns: 'He/Him',
+      headline: 'President at NIAT | Full Stack Developer | Bridging Tech, Media & Innovation | Content Creator | YouTuber',
+      location: 'Hyderabad, Telangana, India',
+      connections: '500+',
+      followers: '4,810',
+      role: 'Creative Director & Co-founder',
       description: 'Leading our creative vision with 8+ years in digital design and branding.',
-      image: 'https://res.cloudinary.com/dqataciy5/image/upload/v1759494875/IMG_7173_fuk9wf.jpg'
+      image: 'https://res.cloudinary.com/dqataciy5/image/upload/v1759494875/IMG_7173_fuk9wf.jpg',
+      about: 'Innovative Computer Science Enthusiast | Eager Learner & Aspiring Technologist. A student at NXTWAVE Institute of Advanced Technologies, highly enthusiastic about coding and creating innovative solutions, passionate about connecting with fellow tech enthusiasts and industry mentors.',
+      technicalSkills: [
+        'MERN Stack (MongoDB, Express, React, Node.js)',
+        'TypeScript, JavaScript, HTML, CSS',
+        'Python, C++, C',
+        'RESTful APIs, Cloudinary Integration',
+        'State Management (React Hooks, Context API)',
+        'Database Design (MongoDB)',
+        'Responsive UI & Mobile-First Design',
+        'Graphic Design (Canva)',
+        'Video Editing (DaVinci Resolve)'
+      ],
+      generalSkills: [
+        'Web Development',
+        'Social Media Marketing',
+        'Team Building',
+        'Leadership',
+        'Content Creation',
+        'Branding & Strategy'
+      ],
+      currentPositions: [
+        {
+          title: 'Co-founder',
+          organization: 'Editco Media',
+          duration: 'Jun 2025 – Present (5 mos)',
+          description: 'Creative agency co-founder: content, branding, digital strategy, team building.'
+        },
+        {
+          title: 'President',
+          organization: 'Media Council NIAT',
+          duration: 'Mar 2025 – Present (8 mos)',
+          description: 'Leading and amplifying student media activities, team leadership, event management.'
+        }
+      ],
+      education: [
+        {
+          institution: 'NxtWave Institute of Advanced Technologies (NIAT)',
+          program: 'Computer Science, Data Science & ML',
+          period: 'Jul 2024 – Jul 2028',
+          skills: 'CSS, HTML, +6 skills'
+        },
+        {
+          institution: 'Chaitanya Deemed to be University',
+          program: 'BTech in Computer Science',
+          period: 'Aug 2024 – Aug 2028',
+          skills: 'C (Programming)'
+        }
+      ],
+      projects: [
+        {
+          name: 'Editco Media – Creative Agency Management Platform',
+          date: 'Oct 2025',
+          techStack: 'MERN (MongoDB, Express.js, React, Node.js)',
+          description: 'Built a web app with an Admin Panel for client, service, and project management, authentication, efficient state handling, and cloud deployment.'
+        },
+        {
+          name: 'Ukusa Cafe – Real-Time MERN Stack Website',
+          date: 'Oct 2025',
+          techStack: 'MERN, Tailwind CSS, Cloudinary, Vercel',
+          description: 'Modern, mobile-responsive, real-time features, admin dashboard, gallery, and wishlist.'
+        }
+      ],
+      linkedin: 'https://linkedin.com/in/sripavantejbalam',
+      instagram: 'https://www.instagram.com/yours.tej/',
+      youtube: 'https://www.youtube.com/@thedevkidd'
     },
     {
       name: 'Deepika M',
-      role: 'UX Designer',
+      fullName: 'Deepika Mundla',
+      pronouns: 'She/Her',
+      headline: 'Backend Intern @ NxtWave | Full Stack Developer | AI & Automation Enthusiast',
+      location: 'Greater Hyderabad Area',
+      connections: '500+',
+      followers: '809',
+      role: 'UX Designer & Backend Developer',
       description: 'Crafting user experiences that delight and convert with data-driven design.',
-      image: 'https://res.cloudinary.com/dqataciy5/image/upload/v1759729626/deepika_JPG_ylslw4.jpg'
+      image: 'https://res.cloudinary.com/dqataciy5/image/upload/v1759729626/deepika_JPG_ylslw4.jpg',
+      about: 'A Computer Science student at NIAT, passionate about problem-solving, full-stack development, and intelligent automation. Deepika is skilled in both frontend and backend (MERN, Django + PostgreSQL). She builds automation workflows with n8n and integrates AI (Google Cloud Vertex AI), with an additional focus on UI/UX using Figma, and social media marketing.',
+      technicalSkills: [
+        'Python, SQL, Django',
+        'Node.js, React, Bootstrap',
+        'CSS, HTML',
+        'MongoDB, PostgreSQL',
+        'REST APIs',
+        'n8n Automation',
+        'Google Cloud Vertex AI',
+        'OpenAI, Gemini AI Studio',
+        'Figma, UI/UX Design'
+      ],
+      generalSkills: [
+        'Social Media Marketing',
+        'Content Strategy',
+        'Automation Engineering',
+        'Problem Solving',
+        'Team Collaboration'
+      ],
+      currentPositions: [
+        {
+          title: 'Backend Intern',
+          organization: 'NxtWave',
+          duration: 'Jun 2025–Present',
+          description: 'Working on Python, SQL, and backend development projects.'
+        },
+        {
+          title: 'Social Media Manager',
+          organization: 'Gen AI Club at NIAT',
+          duration: 'Dec 2024–Present',
+          description: 'Managing online presence, content strategy, analytics, and campaign design.'
+        }
+      ],
+      education: [
+        {
+          institution: 'NxtWave Institute of Advanced Technologies (NIAT)',
+          program: 'Data Science & Machine Learning',
+          period: '2024–2028',
+          skills: 'Bootstrap, CSS, more'
+        },
+        {
+          institution: 'Birla Institute of Technology and Science, Pilani',
+          program: 'BSc, Computer Science',
+          period: '2024–2027',
+          skills: 'C (Programming Language)'
+        }
+      ],
+      projects: [
+        {
+          name: 'CoffeeCo',
+          date: 'Nov 2024',
+          techStack: 'HTML/CSS, Figma',
+          description: 'Mood-based coffee experience website — runner up in an NIAT hackathon. User-centric design, dynamic animations.'
+        }
+      ],
+      linkedin: 'https://www.linkedin.com/in/deepika-mundla/',
+      instagram: 'https://www.instagram.com/deepikaaam_/'
     },
     {
       name: 'Harsha P',
-      role: 'Developer',
+      fullName: 'Harsha P',
+      pronouns: 'He/Him',
+      headline: 'Shaping the Future Through Collaboration @ NIAT | Aspiring Developer',
+      location: 'Hyderabad, Telangana, India',
+      connections: '500+',
+      followers: '1,005',
+      role: 'Developer & Operations Manager',
       description: 'Building scalable solutions with modern technologies and clean code.',
-      image: 'https://res.cloudinary.com/dqataciy5/image/upload/v1759729526/harsha_png_j8dd1t.jpg'
+      image: 'https://res.cloudinary.com/dqataciy5/image/upload/v1759729526/harsha_png_j8dd1t.jpg',
+      about: 'Relentless passion for acquiring new skills and putting them into action. Student at NxtWave Institute of Advanced Technologies (NIAT) focused on leveraging technology to solve real-world challenges and elevate user experiences. Familiar with Figma for designing effective user interfaces and blends creativity and technical expertise.',
+      technicalSkills: [
+        'Python, JavaScript, C++',
+        'HTML, CSS',
+        'Figma (UI/UX Design)',
+        'Web Development',
+        'Problem Solving'
+      ],
+      generalSkills: [
+        'Time Management',
+        'Communication',
+        'Media Strategy',
+        'Social Media Management',
+        'Event Planning',
+        'Team Coordination',
+        'Leadership'
+      ],
+      currentPositions: [
+        {
+          title: 'Operations Manager',
+          organization: 'Media Council NIAT',
+          duration: 'Nov 2024–Present',
+          description: 'Leads all council activities, manages creative/editorial/technical teams, runs on-ground logistics, and conceptualizes events/social media campaigns.'
+        },
+        {
+          title: 'Events & Webinar Lead',
+          organization: 'NIAT Student General Council (NSGC)',
+          duration: 'Mar 2025–Present',
+          description: 'Organizes college events, workshops, webinars, promotes and executes impactful student experiences.'
+        }
+      ],
+      education: [
+        {
+          institution: 'NxtWave Institute of Advanced Technologies (NIAT)',
+          program: 'Computer Science Program, Data Science and Machine Learning Specialization',
+          period: 'Aug 2024',
+          skills: 'Computer Science, Data Science, Machine Learning'
+        },
+        {
+          institution: 'Chaitanya Deemed to be University',
+          program: 'Bachelor of Technology (BTech), Computer Science',
+          period: 'Aug 2024 - Aug 2028',
+          skills: 'Computer Science'
+        }
+      ],
+      projects: [
+        {
+          name: 'AI Crop Doctor',
+          date: 'Recent',
+          techStack: 'Web Technologies, AI',
+          description: 'Voice-based web app (Telugu) for crop disease detection and guidance for farmers, uses AI.'
+        },
+        {
+          name: 'MovieVerse',
+          date: 'Recent',
+          techStack: 'HTML, CSS, JavaScript',
+          description: 'Interactive web app for searching and exploring movies.'
+        }
+      ],
+      linkedin: 'https://www.linkedin.com/in/harsha-polina/',
+      instagram: 'https://www.instagram.com/harsha___vs18/'
     }
   ]
 
@@ -57,33 +268,94 @@ function About() {
 
   // Helper function to create a team member card
   const createTeamCard = (member) => {
+    const handleCardClick = () => {
+      setSelectedMember(member);
+      setIsPopupOpen(true);
+    };
+
     return (
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-all duration-300 h-full flex flex-col">
+      <div 
+        className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-all duration-300 h-full flex flex-col cursor-pointer group"
+        onClick={handleCardClick}
+      >
         {/* Team member image */}
-        <div className="w-64 h-64 rounded-xl mx-auto mb-4 overflow-hidden border-2 border-[#ffd600]/30">
+        <div className="w-64 h-64 rounded-xl mx-auto mb-4 overflow-hidden border-2 border-[#ffd600]/30 group-hover:border-[#ffd600]/60 transition-all duration-300">
           <img
             src={member.image}
             alt={member.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
         
         {/* Team member name */}
-        <h3 className="text-xl font-semibold text-white mb-2">{member.name}</h3>
+        <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#ffd600] transition-colors duration-300">{member.name}</h3>
         
         {/* Team member role */}
         <p className="text-[#ffd600] font-medium mb-3">{member.role}</p>
         
         {/* Team member description */}
-        <p className="text-white/70 text-sm leading-relaxed flex-grow">{member.description}</p>
+        <p className="text-white/70 text-sm leading-relaxed flex-grow group-hover:text-white/90 transition-colors duration-300">{member.description}</p>
+        
+        {/* Click indicator */}
+        <div className="mt-4 text-xs text-white/50 group-hover:text-[#ffd600] transition-colors duration-300">
+          Click for details →
+        </div>
       </div>
     )
   }
 
+  // Intersection Observer for scroll animations (Apple-style) for values
+  useEffect(() => {
+    const observers = []
+    const options = {
+      threshold: 0.15,
+      rootMargin: '0px 0px -100px 0px'
+    }
+
+    valueRefs.current.forEach((card, index) => {
+      if (card) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              // Add delay based on index for stagger effect
+              setTimeout(() => {
+                setVisibleValues(prev => new Set([...prev, index]))
+              }, index * 150) // 150ms stagger between cards
+            } else {
+              // Remove from visible set when card leaves viewport to reset animation
+              setVisibleValues(prev => {
+                const newSet = new Set(prev)
+                newSet.delete(index)
+                return newSet
+              })
+            }
+          })
+        }, options)
+
+        observer.observe(card)
+        observers.push(observer)
+      }
+    })
+
+    return () => {
+      observers.forEach(observer => observer.disconnect())
+    }
+  }, [])
+
   // Helper function to create a value card
-  const createValueCard = (value) => {
+  const createValueCard = (value, index, isVisible) => {
     return (
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 h-full flex flex-col">
+      <div 
+        className={`bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-700 h-full flex flex-col
+          ${isVisible 
+            ? 'opacity-100 translate-y-0' 
+            : 'opacity-0 translate-y-12'
+          }`}
+        style={{
+          transform: isVisible ? 'translateY(0)' : 'translateY(48px)',
+          transition: 'opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        }}
+      >
         {/* Value title */}
         <h3 className="text-xl font-semibold text-white mb-3">{value.title}</h3>
         
@@ -118,9 +390,14 @@ function About() {
         {/* Hero Section with Large Text */}
         <section className="px-4 py-8 flex flex-col justify-start">
           <div className="flex items-center">
-            <h1 className="text-[15vw] leading-none tracking-tight font-extrabold text-[#d5d20d] opacity-80 select-none">
-              ABOUT
-            </h1>
+            <BlurText
+              text="ABOUT"
+              className="text-[15vw] leading-none tracking-tight font-extrabold text-[#d5d20d] opacity-80 select-none"
+              animateBy="words"
+              direction="top"
+              delay={200}
+              stepDuration={0.5}
+            />
           </div>
         </section>
 
@@ -202,8 +479,11 @@ function About() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Loop through values and create value cards */}
               {values.map((value, index) => (
-                <div key={index}>
-                  {createValueCard(value)}
+                <div 
+                  key={index}
+                  ref={el => valueRefs.current[index] = el}
+                >
+                  {createValueCard(value, index, visibleValues.has(index))}
                 </div>
               ))}
             </div>
@@ -231,6 +511,16 @@ function About() {
         </section>
 
       </div>
+
+      {/* Team Member Popup */}
+      <TeamMemberPopup
+        member={selectedMember}
+        isOpen={isPopupOpen}
+        onClose={() => {
+          setIsPopupOpen(false);
+          setSelectedMember(null);
+        }}
+      />
     </div>
   )
 }

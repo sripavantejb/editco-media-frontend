@@ -2,7 +2,9 @@
 import React, { useState } from 'react'
 // Import Navbar component
 import Navbar from './Navbar'
+import BlurText from './BlurText'
 import { apiFetch } from '../config/api'
+import { toast } from 'react-toastify'
 
 // Main Connect component
 function Connect() {
@@ -10,17 +12,18 @@ function Connect() {
 
 
   const [formData, setFormData] = useState({
-    firstName: '',        // User's first name
-    lastName: '',         // User's last name
-    email: '',            // User's email address
-    phone: '',            // User's phone number
-    company: '',          // User's company name (optional)
-    projectType: '',      // Type of project they want
-    budget: '',           // Their budget range
-    timeline: '',         // When they need the project done
-    services: [],         // Array of services they're interested in
-    message: '',          // Additional message/description
-    agreeToTerms: false   // Whether they agree to terms
+    firstName: '',        // Use as single "Name" field for the new layout
+    lastName: '',         // Optional in the new layout
+    email: '',
+    phone: '',
+    company: '',
+    projectType: '',      // Kept for compatibility (not shown in UI)
+    budget: '60000',      // Slider stores numeric string; displayed formatted
+    timeline: '',         // Kept for compatibility (not shown in UI)
+    services: [],
+    message: '',
+    agreeToTerms: false,
+    referral: ''          // New optional field in the new layout
   })
 
   // State to store validation errors - shows error messages to user
@@ -90,14 +93,9 @@ function Connect() {
   const validateForm = () => {
     const newErrors = {}  // Object to store any validation errors
     
-    // Check if first name is empty (trim removes spaces)
+    // Name required
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required'
-    }
-    
-    // Check if last name is empty
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required'
+      newErrors.firstName = 'Name is required'
     }
     
     // Check if email is empty
@@ -117,19 +115,9 @@ function Connect() {
       newErrors.phone = 'Phone number is required'
     }
     
-    // Check if project type is selected
-    if (!formData.projectType) {
-      newErrors.projectType = 'Please select a project type'
-    }
-    
-    // Check if budget is selected
+    // Budget slider must have a value
     if (!formData.budget) {
-      newErrors.budget = 'Please select a budget range'
-    }
-    
-    // Check if timeline is selected
-    if (!formData.timeline) {
-      newErrors.timeline = 'Please select a timeline'
+      newErrors.budget = 'Please choose an estimated budget'
     }
     
     // Check if at least one service is selected
@@ -203,7 +191,7 @@ function Connect() {
       console.log('Form submitted successfully:', result)
       
       // Show success message to user
-      alert('Thank you! We\'ll get back to you within 24 hours.')
+      toast.success('Thank you! We\'ll get back to you within 24 hours.')
       
       // Reset form after successful submission
       setFormData({
@@ -224,7 +212,7 @@ function Connect() {
     } catch (error) {
       // Handle any errors that might occur
       console.error('Connect form error:', error)
-      alert(`Something went wrong: ${error.message}`)
+      toast.error(`Something went wrong: ${error.message}`)
     } finally {
       // Hide loading spinner whether success or error
       setIsLoading(false)
@@ -378,149 +366,158 @@ function Connect() {
 
   // Main component return (what gets displayed on screen)
   return (
-    <div className="min-h-screen bg-[#1d1d1f]">
-      {/* Navigation bar at the top */}
+    <div className="min-h-screen bg-[#0b0b0c]">
       <Navbar />
-      
-      {/* Main content area - starts below the fixed navbar */}
-      <div className="pt-24 px-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          
-          {/* Header section with title and description */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Let's <span className="text-[#ffd600]">Connect</span>
-            </h1>
-            <p className="text-xl text-white/70 max-w-2xl mx-auto">
-              Ready to bring your vision to life? Tell us about your project and we'll create something amazing together.
-            </p>
+      <div className="pt-28 px-4 md:px-8 max-w-7xl mx-auto">
+        {/* Two-column layout with fixed left and scrollable right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 min-h-screen">
+          {/* Left side: fixed heading + contact details */}
+          <div className="lg:col-span-5 lg:sticky lg:top-32 lg:h-fit">
+            <BlurText
+              text="GET IN TOUCH"
+              className="text-[56px] md:text-[96px] leading-[0.9] tracking-tight font-extrabold text-[#d5d20d] mb-8"
+              animateBy="words"
+              direction="top"
+              delay={150}
+              stepDuration={0.4}
+            />
+            <div className="space-y-8">
+              <div>
+                <p className="text-white/60 text-sm mb-1">Have a question?</p>
+                <a href="mailto:hello@editcomedia.com" className="text-white hover:text-[#ffd600] transition-colors text-base">hello@editcomedia.com</a>
+              </div>
+              <div>
+                <p className="text-white/60 text-sm mb-1">Speak to someone?</p>
+                <a href="tel:+918919926373" className="text-white hover:text-[#ffd600] transition-colors text-base">+91 8919926373</a>
+              </div>
+            </div>
           </div>
 
-          {/* Main form container with glass effect */}
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
-            
-            {/* Form element - calls handleSubmit when submitted */}
-            <form onSubmit={handleSubmit} className="space-y-8">
-              
-              {/* Personal Information Section */}
-              <div>
-                <h2 className="text-2xl font-semibold text-white mb-6">Personal Information</h2>
-                {/* Grid layout - 1 column on mobile, 2 columns on medium screens and up */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Using helper functions to create input fields */}
-                  {createInputField('firstName', 'First Name', 'text', 'enter your first name')}
-                  {createInputField('lastName', 'Last Name', 'text', 'enter your last name')}
-                  {createInputField('email', 'Email Address', 'email', 'example@example.com')}
-                  {createInputField('phone', 'Phone Number', 'tel', '+1 (555) 123-4567')}
-                  {createInputField('company', 'Company Name', 'text', 'Your Company', false)}
+          {/* Right side: scrollable form card */}
+          <div className="lg:col-span-7 space-y-6 pb-16">
+            {/* Main form */}
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm">
+              <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-8">
+                
+                {/* Personal Information Section */}
+                <div>
+                  <h2 className="text-2xl font-semibold text-white mb-6">Personal Information</h2>
+                  {/* Grid layout - 1 column on mobile, 2 columns on medium screens and up */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Using helper functions to create input fields */}
+                    {createInputField('firstName', 'First Name', 'text', 'enter your first name')}
+                    {createInputField('lastName', 'Last Name', 'text', 'enter your last name')}
+                    {createInputField('email', 'Email Address', 'email', 'example@example.com')}
+                    {createInputField('phone', 'Phone Number', 'tel', '+1 (555) 123-4567')}
+                    {createInputField('company', 'Company Name', 'text', 'Your Company', false)}
+                  </div>
                 </div>
-              </div>
 
-              {/* Project Details Section */}
-              <div>
-                <h2 className="text-2xl font-semibold text-white mb-6">Project Details</h2>
-                {/* Grid layout - 1 column on mobile, 3 columns on medium screens and up */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Using helper functions to create dropdown select fields */}
-                  {createSelectField('projectType', 'Project Type', [
-                    'Brand Identity',        // Logo and branding work
-                    'Website Development',   // Building websites
-                    'Social Media Content',  // Creating social media posts
-                    'Digital Marketing',     // Online marketing campaigns
-                    'AI Solutions',          // AI chatbots and websites
-                    'Other'                 // Something else
-                  ])}
+                {/* Project Details Section */}
+                <div>
+                  <h2 className="text-2xl font-semibold text-white mb-6">Project Details</h2>
+                  {/* Grid layout - 1 column on mobile, 3 columns on medium screens and up */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Using helper functions to create dropdown select fields */}
+                    {createSelectField('projectType', 'Project Type', [
+                      'Brand Identity',        // Logo and branding work
+                      'Website Development',   // Building websites
+                      'Social Media Content',  // Creating social media posts
+                      'Digital Marketing',     // Online marketing campaigns
+                      'AI Solutions',          // AI chatbots and websites
+                      'Other'                 // Something else
+                    ])}
+                    
+                    {createSelectField('budget', 'Budget Range', [
+                      '$1k-$5k',              // Small budget
+                      '$5k-$10k',             // Medium budget
+                      '$10k-$25k',            // Large budget
+                      '$25k-$50k',            // Very large budget
+                      '$50k+'                 // Enterprise budget
+                    ])}
+                    
+                    {createSelectField('timeline', 'Timeline', [
+                      '1-2 weeks',            // Quick turnaround
+                      '1 month',               // Standard timeline
+                      '2-3 months',           // Medium project
+                      '3-6 months',           // Longer project
+                      '6+ months'             // Very long project
+                    ])}
+                  </div>
+                </div>
+
+                {/* Services Section - Multi-select checkboxes */}
+                <div>
+                  <h2 className="text-2xl font-semibold text-white mb-6">Services Needed</h2>
+                  <p className="text-white/70 mb-4">Select all services that apply to your project:</p>
                   
-                  {createSelectField('budget', 'Budget Range', [
-                    '$1k-$5k',              // Small budget
-                    '$5k-$10k',             // Medium budget
-                    '$10k-$25k',            // Large budget
-                    '$25k-$50k',            // Very large budget
-                    '$50k+'                 // Enterprise budget
-                  ])}
+                  {/* Grid layout for service checkboxes */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* Loop through each service and create a checkbox */}
+                    {availableServices.map((service, index) => (
+                      <label key={index} className="flex items-center p-4 bg-white/5 border border-white/20 rounded-xl hover:bg-white/10 transition-colors duration-200 cursor-pointer">
+                        {/* Checkbox for this service */}
+                        <input
+                          type="checkbox"
+                          checked={formData.services.includes(service)}  // Check if this service is selected
+                          onChange={() => handleServiceChange(service)}   // Call function when clicked
+                          className="w-4 h-4 text-[#d5d20d] bg-white/5 border-white/20 rounded focus:ring-[#d5d20d]/50 focus:ring-2 mr-3"
+                        />
+                        {/* Service name */}
+                        <span className="text-white/90 text-sm font-medium">{service}</span>
+                      </label>
+                    ))}
+                  </div>
                   
-                  {createSelectField('timeline', 'Timeline', [
-                    '1-2 weeks',            // Quick turnaround
-                    '1 month',               // Standard timeline
-                    '2-3 months',           // Medium project
-                    '3-6 months',           // Longer project
-                    '6+ months'             // Very long project
-                  ])}
-                </div>
-              </div>
-
-              {/* Services Section - Multi-select checkboxes */}
-              <div>
-                <h2 className="text-2xl font-semibold text-white mb-6">Services Needed</h2>
-                <p className="text-white/70 mb-4">Select all services that apply to your project:</p>
-                
-                {/* Grid layout for service checkboxes */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {/* Loop through each service and create a checkbox */}
-                  {availableServices.map((service, index) => (
-                    <label key={index} className="flex items-center p-4 bg-white/5 border border-white/20 rounded-xl hover:bg-white/10 transition-colors duration-200 cursor-pointer">
-                      {/* Checkbox for this service */}
-                      <input
-                        type="checkbox"
-                        checked={formData.services.includes(service)}  // Check if this service is selected
-                        onChange={() => handleServiceChange(service)}   // Call function when clicked
-                        className="w-4 h-4 text-[#ffd600] bg-white/5 border-white/20 rounded focus:ring-[#ffd600]/50 focus:ring-2 mr-3"
-                      />
-                      {/* Service name */}
-                      <span className="text-white/90 text-sm font-medium">{service}</span>
-                    </label>
-                  ))}
-                </div>
-                
-                {/* Show error message if no services are selected */}
-                {errors.services && (
-                  <p className="mt-2 text-sm text-red-400">{errors.services}</p>
-                )}
-              </div>
-
-              {/* Message Section - Optional textarea for additional details */}
-              <div>
-                <h2 className="text-2xl font-semibold text-white mb-6">Tell Us More</h2>
-                {/* Using helper function to create textarea field */}
-                {createTextareaField('message', 'Project Description', 'Describe your project goals, requirements, and any specific details you\'d like us to know...', false)}
-              </div>
-
-              {/* Terms and Conditions - Required checkbox */}
-              <div>
-                {/* Using helper function to create checkbox with links */}
-                {createCheckboxField('agreeToTerms', 'I agree to the', {
-                  terms: 'Terms of Service',    // Link to terms
-                  privacy: 'Privacy Policy'    // Link to privacy policy
-                })}
-              </div>
-
-
-              {/* Submit button with loading state */}
-              <button
-                type="submit"                    // Submit the form when clicked
-                disabled={isLoading}              // Disable button while loading
-                className="w-full relative flex items-center justify-center px-8 py-4 text-white border border-white/30 rounded-xl overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed text-lg font-medium"
-              >
-                {/* Button background gradient that appears on hover */}
-                <span className="absolute inset-x-0 bottom-0 h-0 bg-gradient-to-t from-[#ffd600] to-[#fff9be] transition-all duration-500 ease-in-out group-hover:h-full group-disabled:h-0"></span>
-                
-                {/* Button content */}
-                <span className="relative z-10 flex items-center">
-                  {isLoading ? (
-                    <>
-                      {/* Loading spinner animation */}
-                      <svg className="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Sending message...
-                    </>
-                  ) : (
-                    'Send Message'
+                  {/* Show error message if no services are selected */}
+                  {errors.services && (
+                    <p className="mt-2 text-sm text-red-400">{errors.services}</p>
                   )}
-                </span>
-              </button>
-            </form>
+                </div>
+
+                {/* Message Section - Optional textarea for additional details */}
+                <div>
+                  <h2 className="text-2xl font-semibold text-white mb-6">Tell Us More</h2>
+                  {/* Using helper function to create textarea field */}
+                  {createTextareaField('message', 'Project Description', 'Describe your project goals, requirements, and any specific details you\'d like us to know...', false)}
+                </div>
+
+                {/* Terms and Conditions - Required checkbox */}
+                <div>
+                  {/* Using helper function to create checkbox with links */}
+                  {createCheckboxField('agreeToTerms', 'I agree to the', {
+                    terms: 'Terms of Service',    // Link to terms
+                    privacy: 'Privacy Policy'    // Link to privacy policy
+                  })}
+                </div>
+
+                {/* Submit button with loading state */}
+                <button
+                  type="submit"                    // Submit the form when clicked
+                  disabled={isLoading}              // Disable button while loading
+                  className="w-full relative flex items-center justify-center px-8 py-4 text-white border border-white/30 rounded-xl overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed text-lg font-medium"
+                >
+                  {/* Button background gradient that appears on hover */}
+                  <span className="absolute inset-x-0 bottom-0 h-0 bg-gradient-to-t from-[#ffd600] to-[#fff9be] transition-all duration-500 ease-in-out group-hover:h-full group-disabled:h-0"></span>
+                  
+                  {/* Button content */}
+                  <span className="relative z-10 flex items-center">
+                    {isLoading ? (
+                      <>
+                        {/* Loading spinner animation */}
+                        <svg className="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Sending message...
+                      </>
+                    ) : (
+                      'Send Message'
+                    )}
+                  </span>
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>

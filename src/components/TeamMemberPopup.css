@@ -1,0 +1,138 @@
+/* Apple-style animations for Team Member Popup */
+
+@keyframes popupSlideIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes popupSlideOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+}
+
+@keyframes backdropFadeIn {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
+}
+
+@keyframes backdropFadeOut {
+  0% {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+}
+
+@keyframes contentSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes skillTagPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Popup container animations */
+.popup-container {
+  animation: popupSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.popup-container.closing {
+  animation: popupSlideOut 0.3s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+}
+
+/* Backdrop animations */
+.popup-backdrop {
+  animation: backdropFadeIn 0.3s ease-out forwards;
+}
+
+.popup-backdrop.closing {
+  animation: backdropFadeOut 0.2s ease-in forwards;
+}
+
+/* Content animations */
+.popup-content {
+  animation: contentSlideUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both;
+}
+
+/* Skill tag animations */
+.skill-tag {
+  animation: skillTagPop 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.skill-tag:nth-child(1) { animation-delay: 0.1s; }
+.skill-tag:nth-child(2) { animation-delay: 0.15s; }
+.skill-tag:nth-child(3) { animation-delay: 0.2s; }
+.skill-tag:nth-child(4) { animation-delay: 0.25s; }
+.skill-tag:nth-child(5) { animation-delay: 0.3s; }
+.skill-tag:nth-child(6) { animation-delay: 0.35s; }
+.skill-tag:nth-child(7) { animation-delay: 0.4s; }
+.skill-tag:nth-child(8) { animation-delay: 0.45s; }
+.skill-tag:nth-child(9) { animation-delay: 0.5s; }
+
+/* Hover effects */
+.popup-close-btn {
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.popup-close-btn:hover {
+  transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Smooth scrolling for popup content */
+.popup-scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.popup-scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.popup-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.popup-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.popup-scrollable::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
