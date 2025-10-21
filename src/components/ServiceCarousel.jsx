@@ -299,6 +299,7 @@ const ServiceCarousel = () => {
         const isActive = activeIndex === originalIndex;
         
         return (
+          
           <div
             // Assign a ref to each card element
             ref={(el) => (cardRefs.current[index] = el)}

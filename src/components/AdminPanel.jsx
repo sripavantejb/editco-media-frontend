@@ -8,10 +8,14 @@ import BlurText from './BlurText';
 function AdminPanel() {
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loginHistory, setLoginHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState('submissions'); // 'submissions', 'users', 'loginHistory'
 
   // Check if admin is logged in
   useEffect(() => {
@@ -22,10 +26,20 @@ function AdminPanel() {
     }
   }, [navigate]);
 
-  // Fetch submissions
+  // Fetch data based on active tab
   useEffect(() => {
-    fetchSubmissions();
-  }, []);
+    fetchData();
+  }, [activeTab]);
+
+  const fetchData = async () => {
+    if (activeTab === 'submissions') {
+      await fetchSubmissions();
+    } else if (activeTab === 'users') {
+      await fetchUsers();
+    } else if (activeTab === 'loginHistory') {
+      await fetchLoginHistory();
+    }
+  };
 
   const fetchSubmissions = async () => {
     try {
@@ -40,6 +54,44 @@ function AdminPanel() {
       }
     } catch (err) {
       setError('Error fetching submissions');
+      console.error('Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await apiFetch('/api/admin/users');
+      const data = await response.json();
+      
+      if (data.success) {
+        setUsers(data.data);
+      } else {
+        setError('Failed to fetch users');
+      }
+    } catch (err) {
+      setError('Error fetching users');
+      console.error('Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchLoginHistory = async () => {
+    try {
+      setLoading(true);
+      const response = await apiFetch('/api/admin/login-history');
+      const data = await response.json();
+      
+      if (data.success) {
+        setLoginHistory(data.data);
+      } else {
+        setError('Failed to fetch login history');
+      }
+    } catch (err) {
+      setError('Error fetching login history');
       console.error('Error:', err);
     } finally {
       setLoading(false);
@@ -146,12 +198,19 @@ function AdminPanel() {
     });
   };
 
+  const getLoadingMessage = () => {
+    if (activeTab === 'submissions') return 'Loading submissions...';
+    if (activeTab === 'users') return 'Loading users...';
+    if (activeTab === 'loginHistory') return 'Loading login history...';
+    return 'Loading...';
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ffd600] mx-auto mb-4"></div>
-          <p className="text-white/70 text-[16px] md:text-[18px]">Loading submissions...</p>
+          <p className="text-white/70 text-[16px] md:text-[18px]">{getLoadingMessage()}</p>
         </div>
       </div>
     );
@@ -176,12 +235,16 @@ function AdminPanel() {
               stepDuration={0.4}
             />
             <p className="text-white/70 text-[16px] md:text-[18px]">
-              Contact Form Submissions Management
+              {activeTab === 'submissions' && 'Contact Form Submissions Management'}
+              {activeTab === 'users' && 'User Management'}
+              {activeTab === 'loginHistory' && 'Login History'}
             </p>
           </div>
           <div className="flex items-center gap-4 md:gap-6 flex-wrap">
             <span className="text-white/70 text-[14px] md:text-[16px]">
-              Total: {submissions.length} submissions
+              {activeTab === 'submissions' && `Total: ${submissions.length} submissions`}
+              {activeTab === 'users' && `Total: ${users.length} users`}
+              {activeTab === 'loginHistory' && `Total: ${loginHistory.length} logins`}
             </span>
             <button
               onClick={logout}
@@ -193,7 +256,68 @@ function AdminPanel() {
           </div>
         </div>
 
+        {/* Tabs */}
+        <div className="mb-8 flex flex-wrap gap-3">
+          <button
+            onClick={() => {
+              setActiveTab('submissions');
+              setError('');
+            }}
+            className={`relative px-6 py-3 text-[14px] md:text-[16px] border rounded-xl overflow-hidden group transition-colors duration-200 ${
+              activeTab === 'submissions' 
+                ? 'text-black border-[#ffd600] bg-[#ffd600]' 
+                : 'text-white border-white/30 hover:text-black'
+            }`}
+          >
+            <span className={`absolute inset-x-0 bottom-0 h-0 transition-all duration-500 ease-in-out ${
+              activeTab === 'submissions' ? 'h-full bg-[#ffd600]' : 'bg-gradient-to-t from-[#ffd600] to-[#fff9be] group-hover:h-full'
+            }`}></span>
+            <span className="relative z-10">Submissions</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('users');
+              setError('');
+            }}
+            className={`relative px-6 py-3 text-[14px] md:text-[16px] border rounded-xl overflow-hidden group transition-colors duration-200 ${
+              activeTab === 'users' 
+                ? 'text-black border-[#ffd600] bg-[#ffd600]' 
+                : 'text-white border-white/30 hover:text-black'
+            }`}
+          >
+            <span className={`absolute inset-x-0 bottom-0 h-0 transition-all duration-500 ease-in-out ${
+              activeTab === 'users' ? 'h-full bg-[#ffd600]' : 'bg-gradient-to-t from-[#ffd600] to-[#fff9be] group-hover:h-full'
+            }`}></span>
+            <span className="relative z-10">Users</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('loginHistory');
+              setError('');
+            }}
+            className={`relative px-6 py-3 text-[14px] md:text-[16px] border rounded-xl overflow-hidden group transition-colors duration-200 ${
+              activeTab === 'loginHistory' 
+                ? 'text-black border-[#ffd600] bg-[#ffd600]' 
+                : 'text-white border-white/30 hover:text-black'
+            }`}
+          >
+            <span className={`absolute inset-x-0 bottom-0 h-0 transition-all duration-500 ease-in-out ${
+              activeTab === 'loginHistory' ? 'h-full bg-[#ffd600]' : 'bg-gradient-to-t from-[#ffd600] to-[#fff9be] group-hover:h-full'
+            }`}></span>
+            <span className="relative z-10">Login History</span>
+          </button>
+        </div>
+
       <div className="container mx-auto px-0">
+        {error && (
+          <div className="bg-red-500/20 border border-red-500/30 text-red-400 p-4 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
+
+        {/* Submissions Tab */}
+        {activeTab === 'submissions' && (
+          <>
         {/* Filters */}
         <div className="mb-8">
           <div className="flex flex-wrap gap-3 mb-6">
@@ -264,12 +388,6 @@ function AdminPanel() {
             </button>
           </div>
         </div>
-
-        {error && (
-          <div className="bg-red-500/20 border border-red-500/30 text-red-400 p-4 rounded-lg mb-6">
-            {error}
-          </div>
-        )}
 
         {/* Submissions List */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -405,6 +523,148 @@ function AdminPanel() {
             )}
           </div>
         </div>
+        </>
+        )}
+
+        {/* Users Tab */}
+        {activeTab === 'users' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Users List */}
+            <div className="space-y-6">
+              {users.length === 0 ? (
+                <div className="bg-[#1d1d1f] border border-white/10 rounded-xl p-8 text-center">
+                  <p className="text-white/70 text-[16px]">No users found</p>
+                </div>
+              ) : (
+                users.map((user) => (
+                  <div
+                    key={user._id}
+                    onClick={() => setSelectedUser(user)}
+                    className={`bg-[#1d1d1f] border border-white/10 rounded-xl p-6 cursor-pointer transition-all duration-200 hover:border-[#ffd600]/30 hover:bg-[#1d1d1f]/80 ${
+                      selectedUser?._id === user._id ? 'ring-2 ring-[#ffd600]/50 border-[#ffd600]/30' : ''
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-white font-medium text-[18px] md:text-[20px]">
+                          {user.firstName} {user.lastName}
+                        </h3>
+                        <p className="text-white/70 text-[14px] md:text-[16px] mt-1">@{user.username}</p>
+                      </div>
+                    </div>
+                    <div className="text-white/70 text-[14px] md:text-[16px] space-y-2">
+                      <p><span className="text-white/90 font-medium">Email:</span> {user.email}</p>
+                      {user.phoneNumber && <p><span className="text-white/90 font-medium">Phone:</span> {user.phoneNumber}</p>}
+                      {user.companyName && <p><span className="text-white/90 font-medium">Company:</span> {user.companyName}</p>}
+                      <p><span className="text-white/90 font-medium">Registered:</span> {formatDate(user.createdAt)}</p>
+                      <p><span className="text-white/90 font-medium">Login Count:</span> {user.loginHistory?.length || 0}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Right Column - User Details */}
+            <div className="lg:sticky lg:top-8 lg:h-fit">
+              {selectedUser ? (
+                <div className="bg-[#1d1d1f] border border-white/10 rounded-xl p-6">
+                  <h2 className="text-[20px] md:text-[24px] font-medium text-white mb-6">
+                    <span className="text-[#AAA80F]">User</span> <span className="text-[#63676A]">Details</span>
+                  </h2>
+
+                  {/* Personal Information */}
+                  <div className="mb-6">
+                    <h3 className="text-white font-medium text-[16px] md:text-[18px] mb-4">Personal Information</h3>
+                    <div className="space-y-3 text-white/70 text-[14px] md:text-[16px]">
+                      <p><span className="text-white/90 font-medium">Name:</span> {selectedUser.firstName} {selectedUser.lastName}</p>
+                      <p><span className="text-white/90 font-medium">Username:</span> @{selectedUser.username}</p>
+                      <p><span className="text-white/90 font-medium">Email:</span> {selectedUser.email}</p>
+                      {selectedUser.phoneNumber && <p><span className="text-white/90 font-medium">Phone:</span> {selectedUser.phoneNumber}</p>}
+                      {selectedUser.companyName && <p><span className="text-white/90 font-medium">Company:</span> {selectedUser.companyName}</p>}
+                    </div>
+                  </div>
+
+                  {/* Login History */}
+                  <div className="mb-6">
+                    <h3 className="text-white font-medium text-[16px] md:text-[18px] mb-4">Recent Login History</h3>
+                    {selectedUser.loginHistory && selectedUser.loginHistory.length > 0 ? (
+                      <div className="space-y-3 max-h-96 overflow-y-auto">
+                        {selectedUser.loginHistory.slice().reverse().slice(0, 10).map((login, index) => (
+                          <div key={index} className="bg-black/20 border border-white/10 p-3 rounded-lg">
+                            <p className="text-white/90 text-[14px] md:text-[16px] font-medium">{formatDate(login.timestamp)}</p>
+                            <p className="text-white/70 text-[12px] md:text-[14px]">IP: {login.ipAddress || 'unknown'}</p>
+                            <p className="text-white/50 text-[11px] md:text-[13px] truncate">{login.userAgent || 'unknown'}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-white/50 text-[14px]">No login history available</p>
+                    )}
+                  </div>
+
+                  {/* Metadata */}
+                  <div className="text-white/50 text-[12px] md:text-[14px] space-y-2 pt-4 border-t border-white/10">
+                    <p><span className="text-white/70 font-medium">Registered:</span> {formatDate(selectedUser.createdAt)}</p>
+                    <p><span className="text-white/70 font-medium">Last Updated:</span> {formatDate(selectedUser.updatedAt)}</p>
+                    <p><span className="text-white/70 font-medium">ID:</span> {selectedUser._id}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-[#1d1d1f] border border-white/10 rounded-xl p-8 text-center">
+                  <p className="text-white/70 text-[16px]">Select a user to view details</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Login History Tab */}
+        {activeTab === 'loginHistory' && (
+          <div className="space-y-4">
+            {loginHistory.length === 0 ? (
+              <div className="bg-[#1d1d1f] border border-white/10 rounded-xl p-8 text-center">
+                <p className="text-white/70 text-[16px]">No login history found</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="text-white/90 font-medium text-[14px] md:text-[16px] pb-4 pr-4">Date & Time</th>
+                      <th className="text-white/90 font-medium text-[14px] md:text-[16px] pb-4 pr-4">User</th>
+                      <th className="text-white/90 font-medium text-[14px] md:text-[16px] pb-4 pr-4">Email</th>
+                      <th className="text-white/90 font-medium text-[14px] md:text-[16px] pb-4 pr-4">IP Address</th>
+                      <th className="text-white/90 font-medium text-[14px] md:text-[16px] pb-4">User Agent</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loginHistory.map((login, index) => (
+                      <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                        <td className="text-white/70 text-[13px] md:text-[15px] py-4 pr-4">
+                          {formatDate(login.timestamp)}
+                        </td>
+                        <td className="text-white/70 text-[13px] md:text-[15px] py-4 pr-4">
+                          {login.firstName} {login.lastName}
+                          <br />
+                          <span className="text-white/50 text-[11px] md:text-[13px]">@{login.username}</span>
+                        </td>
+                        <td className="text-white/70 text-[13px] md:text-[15px] py-4 pr-4">
+                          {login.email}
+                        </td>
+                        <td className="text-white/70 text-[13px] md:text-[15px] py-4 pr-4">
+                          {login.ipAddress || 'unknown'}
+                        </td>
+                        <td className="text-white/70 text-[11px] md:text-[13px] py-4 max-w-xs truncate" title={login.userAgent || 'unknown'}>
+                          {login.userAgent || 'unknown'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
       </div>
       </div>
     </div>
