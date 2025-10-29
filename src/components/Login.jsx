@@ -16,8 +16,8 @@ function Login() {
 
   // Admin credentials (same as before)
   const ADMIN_CREDENTIALS = {
-    username: "admin",
-    password: "editco2024"
+    username: "superadmin@editcomedia.com",
+    password: "editcomedia@DHT"
   };
 
   const handleChange = (e) => {
