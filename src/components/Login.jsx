@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import BlurText from './BlurText';
 import { apiFetch } from '../config/api';
 import { toast } from 'react-toastify';
+import { useGoogleLogin } from '@react-oauth/google';
 
 function Login() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ function Login() {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const googleEnabled = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID);
 
   // Admin credentials (same as before)
   const ADMIN_CREDENTIALS = {
@@ -120,6 +122,36 @@ function Login() {
     }
   };
 
+  const handleGoogleAuthentication = async (accessToken) => {
+    try {
+      const response = await apiFetch('/api/users/google-login', {
+        method: 'POST',
+        body: JSON.stringify({ accessToken })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        localStorage.setItem('userLoggedIn', 'true');
+        localStorage.setItem('userSession', JSON.stringify({
+          loggedIn: true,
+          user: data.user,
+          timestamp: Date.now()
+        }));
+        toast.success(`Welcome back, ${data.user.firstName}!`);
+        navigate('/dashboard');
+        return true;
+      }
+
+      toast.error(data.error || 'Google sign-in failed');
+      return false;
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      toast.error('Google sign-in failed. Please try again.');
+      return false;
+    }
+  };
+
   const createInputField = (fieldName, label, type, placeholder) => {
     const hasError = errors[fieldName];
     
@@ -209,6 +241,25 @@ function Login() {
                   </span>
                 </button>
 
+                {googleEnabled ? (
+                  <GoogleSignInButton 
+                    disabled={isLoading}
+                    onAuthenticated={handleGoogleAuthentication}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    className="flex items-center justify-center w-full gap-3 px-6 py-3 text-[16px] md:text-[18px] text-white/60 border border-dashed border-white/10 rounded-xl bg-black/20 cursor-not-allowed"
+                    title="Google sign-in is unavailable because VITE_GOOGLE_CLIENT_ID is not configured."
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 488 512" aria-hidden="true">
+                      <path fill="#EA4335" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C318.6 106.1 285.7 92 248 92c-86.8 0-157.4 71-157.4 164s70.6 164 157.4 164c74.9 0 123.5-42.9 135.4-102.9H248v-82.1h240.6c2.1 11.4 3.4 23.3 3.4 35.8z"></path>
+                    </svg>
+                    <span>Google sign-in unavailable</span>
+                  </button>
+                )}
+
                 {/* Divider */}
                 <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
@@ -243,6 +294,67 @@ function Login() {
         </div>
       </div>
     </div>
+  );
+}
+
+function GoogleSignInButton({ disabled, onAuthenticated }) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const googleLogin = useGoogleLogin({
+    flow: 'implicit',
+    scope: 'openid profile email',
+    ux_mode: 'popup',
+    onSuccess: async (tokenResponse) => {
+      try {
+        if (!tokenResponse?.access_token) {
+          throw new Error('Missing Google access token');
+        }
+        await onAuthenticated(tokenResponse.access_token);
+      } catch (error) {
+        console.error('Google sign-in error:', error);
+        toast.error('Google sign-in failed. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: () => {
+      toast.error('Google sign-in was cancelled or failed.');
+      setIsLoading(false);
+    }
+  });
+
+  const handleClick = async () => {
+    setIsLoading(true);
+    try {
+      await googleLogin();
+    } catch (error) {
+      console.error('Google sign-in failed to start:', error);
+      toast.error('Unable to launch Google sign-in. Please check your popup blocker or try again.');
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={disabled || isLoading}
+      className="flex items-center justify-center w-full gap-3 px-6 py-3 text-[16px] md:text-[18px] text-white border border-white/20 rounded-xl bg-black/30 hover:bg-black/40 transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      {isLoading ? (
+        <div className="flex items-center gap-3">
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+          Signing in with Google...
+        </div>
+      ) : (
+        <>
+          <svg className="w-5 h-5" viewBox="0 0 488 512" aria-hidden="true">
+            <path fill="#EA4335" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C318.6 106.1 285.7 92 248 92c-86.8 0-157.4 71-157.4 164s70.6 164 157.4 164c74.9 0 123.5-42.9 135.4-102.9H248v-82.1h240.6c2.1 11.4 3.4 23.3 3.4 35.8z"></path>
+          </svg>
+          <span className="text-white/90">Continue with Google</span>
+        </>
+      )}
+    </button>
   );
 }
 

@@ -1,12 +1,14 @@
-# React + Vite
+# Editco Media Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Local Environment Variables
 
-Currently, two official plugins are available:
+Google sign-in and API requests rely on Vite environment variables. These **must** be defined in a `.env` file inside the `frontend/` folder (next to `package.json`):
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```
+VITE_API_URL=http://localhost:3000
+VITE_GOOGLE_CLIENT_ID=394974485913-kt8pjpmc3d06bqm2cg1gbv794n5q6hmq.apps.googleusercontent.com
+```
 
-## Expanding the ESLint configuration
+If you already created the file, make sure it is named exactly `.env` (no extra extensions) and that the keys start with `VITE_`. After editing the file, **stop and restart** the Vite dev server (`npm run dev`) so the new values are loaded.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+For production deployments, supply the same variables through your hosting provider’s environment settings.
