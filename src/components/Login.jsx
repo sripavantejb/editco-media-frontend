@@ -14,7 +14,11 @@ function Login() {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const googleEnabled = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID);
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const googleRedirectUri =
+    import.meta.env.VITE_GOOGLE_REDIRECT_URI ||
+    (typeof window !== 'undefined' ? window.location.origin : undefined);
+  const googleEnabled = Boolean(googleClientId);
 
   // Admin credentials (same as before)
   const ADMIN_CREDENTIALS = {
@@ -245,6 +249,7 @@ function Login() {
                   <GoogleSignInButton 
                     disabled={isLoading}
                     onAuthenticated={handleGoogleAuthentication}
+                    redirectUri={googleRedirectUri}
                   />
                 ) : (
                   <button
@@ -297,13 +302,14 @@ function Login() {
   );
 }
 
-function GoogleSignInButton({ disabled, onAuthenticated }) {
+function GoogleSignInButton({ disabled, onAuthenticated, redirectUri }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const googleLogin = useGoogleLogin({
     flow: 'implicit',
     scope: 'openid profile email',
     ux_mode: 'popup',
+    redirect_uri: redirectUri,
     onSuccess: async (tokenResponse) => {
       try {
         if (!tokenResponse?.access_token) {
