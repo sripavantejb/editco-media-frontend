@@ -9,6 +9,7 @@ import Work from './Work'
 // import ServiceCard from './ServiceCard'
 import ServiceCarousel from './ServiceCarousel'
 import Footer from './Footer'
+import CallButton from './CallButton'
 
 
 function Home() {
@@ -21,6 +22,7 @@ function Home() {
       <Work />
       <About />
       <Footer />
+      <CallButton />
     </div>
   )
 }
